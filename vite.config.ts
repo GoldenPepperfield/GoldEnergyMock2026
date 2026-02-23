@@ -42,5 +42,14 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
+    proxy: {
+      // Proxy REN Datahub API to avoid CORS — browser calls /api/ren/...
+      '/api/ren': {
+        target: 'https://servicebus.ren.pt',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api\/ren/, '/datahubapi'),
+      },
+    },
   },
 })

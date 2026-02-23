@@ -10,6 +10,7 @@ import { GoldCare } from "./pages/GoldCare";
 import { SolarMatch } from "./pages/SolarMatch";
 import { Notifications } from "./pages/Notifications";
 import { Profile } from "./pages/Profile";
+import { About } from "./pages/About";
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
       { path: "solar", Component: SolarMatch },
       { path: "notifications", Component: Notifications },
       { path: "profile", Component: Profile },
+      { path: "about", Component: About },
     ],
   },
 ]);
