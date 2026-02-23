@@ -1,7 +1,7 @@
 import { Outlet, Link, useLocation } from "react-router";
 import { Home, Leaf, Plug, TrendingUp, Award, MessageCircle, Heart, Sun, Bell, User, Menu } from "lucide-react";
 import { useState } from "react";
-import goldLogo from "figma:asset/760974ae8bc6988ee76def7f6e9df66f2bc9f23d.png";
+import goldLogo from "../images/GOLDENERGY.png";
 
 export function Layout() {
   const location = useLocation();
@@ -21,7 +21,7 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Header */}
-      <header className="bg-[#3B7DB7] text-white p-4 flex items-center justify-between">
+      <header className="bg-white text-gray-800 p-4 flex items-center justify-between border-b border-gray-200 shadow-sm">
         <div className="flex items-center gap-3">
           <button onClick={() => setMenuOpen(!menuOpen)} className="lg:hidden">
             <Menu size={24} />
@@ -96,17 +96,17 @@ export function Layout() {
       </div>
 
       {/* Bottom Navigation - Mobile */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#3B7DB7] text-white flex items-center justify-around p-3 shadow-lg">
-        <Link to="/" className={location.pathname === "/" ? "text-white" : "text-blue-200"}>
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white text-gray-800 flex items-center justify-around p-3 shadow-lg border-t border-gray-200">
+        <Link to="/" className={location.pathname === "/" ? "text-[#3B7DB7]" : "text-gray-400"}>
           <Home size={24} />
         </Link>
-        <Link to="/mygreen-score" className={location.pathname === "/mygreen-score" ? "text-white" : "text-blue-200"}>
+        <Link to="/mygreen-score" className={location.pathname === "/mygreen-score" ? "text-[#3B7DB7]" : "text-gray-400"}>
           <Leaf size={24} />
         </Link>
-        <Link to="/rewards" className={location.pathname === "/rewards" ? "text-white" : "text-blue-200"}>
+        <Link to="/rewards" className={location.pathname === "/rewards" ? "text-[#3B7DB7]" : "text-gray-400"}>
           <Award size={24} />
         </Link>
-        <Link to="/chatbot" className={location.pathname === "/chatbot" ? "text-white" : "text-blue-200"}>
+        <Link to="/chatbot" className={location.pathname === "/chatbot" ? "text-[#3B7DB7]" : "text-gray-400"}>
           <MessageCircle size={24} />
         </Link>
       </nav>
