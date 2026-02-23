@@ -3,9 +3,39 @@ import {
   TrendingUp, Thermometer, Cloud, Clock, BarChart2, Zap,
   Activity, DollarSign, Info, ChevronRight,
 } from "lucide-react";
+import katex from "katex";
+import "katex/dist/katex.min.css";
 
 // ─────────────────────────────────────────────
-// Small helper card
+// LaTeX rendering helpers
+// ─────────────────────────────────────────────
+function InlineMath({ tex }: { tex: string }) {
+  const html = katex.renderToString(tex, { throwOnError: false, displayMode: false });
+  return <span dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
+function BlockMath({ tex }: { tex: string }) {
+  const html = katex.renderToString(tex, { throwOnError: false, displayMode: true });
+  return (
+    <div
+      className="overflow-x-auto my-3 px-4 py-3 bg-white/60 border border-white/80 rounded-xl"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
+
+function BlockMathDark({ tex }: { tex: string }) {
+  const html = katex.renderToString(tex, { throwOnError: false, displayMode: true });
+  return (
+    <div
+      className="katex-dark overflow-x-auto my-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
+
+// ─────────────────────────────────────────────
+// Layout helpers
 // ─────────────────────────────────────────────
 function Section({
   icon,
@@ -24,15 +54,7 @@ function Section({
         <div className="flex-shrink-0">{icon}</div>
         <h2 className="text-lg font-bold text-gray-800">{title}</h2>
       </div>
-      <div className="text-sm text-gray-700 space-y-2 leading-relaxed">{children}</div>
-    </div>
-  );
-}
-
-function Formula({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="bg-white/60 border border-white/80 rounded-xl px-4 py-3 font-mono text-sm text-purple-800 my-3 overflow-x-auto">
-      {children}
+      <div className="text-sm text-gray-700 space-y-3 leading-relaxed">{children}</div>
     </div>
   );
 }
@@ -106,23 +128,21 @@ export function About() {
         accent="bg-blue-50 border-blue-100"
       >
         <p>
-          O sistema carrega um ficheiro JSON com centenas de leituras horárias de consumo
-          (campos <code className="bg-blue-100 rounded px-1">timestamp</code> e{" "}
-          <code className="bg-blue-100 rounded px-1">kwh</code>). Cada leitura é
-          agregada por dia e por hora do dia.
+          Para cada <strong>dia da semana</strong> <InlineMath tex="d \in \{0,\ldots,6\}" /> é
+          calculada a média histórica de consumo diário total:
         </p>
-        <p className="mt-2">
-          Para cada <strong>dia da semana</strong> (segunda a domingo) é calculada a
-          média histórica de consumo diário total — designada{" "}
-          <code className="bg-blue-100 rounded px-1">dowAvg[dow]</code> — onde{" "}
-          <em>dow</em> é o índice 0–6 do dia da semana.
+        <BlockMath tex="\overline{E}_d = \frac{1}{|S_d|}\sum_{i \in S_d} E_i" />
+        <p>
+          onde <InlineMath tex="S_d" /> é o conjunto de dias históricos com índice de dia da
+          semana <InlineMath tex="d" /> e <InlineMath tex="E_i" /> o consumo total do dia{" "}
+          <InlineMath tex="i" /> em kWh.
         </p>
-        <p className="mt-2">
-          Paralelamente, constrói-se um <strong>perfil horário normalizado</strong>: a
-          fração de energia tipicamente consumida em cada hora do dia (0–23 h), somando
-          sempre 1. Este perfil captura padrões como o pico matinal ou o uso intenso
-          ao final do dia.
+        <p>
+          Paralelamente, constrói-se o <strong>perfil horário normalizado</strong>{" "}
+          <InlineMath tex="\phi_h" /> — a fração de energia tipicamente consumida na hora{" "}
+          <InlineMath tex="h" />:
         </p>
+        <BlockMath tex="\phi_h = \frac{\bar{e}_h}{\displaystyle\sum_{j=0}^{23}\bar{e}_j}, \qquad \sum_{h=0}^{23}\phi_h = 1" />
       </Section>
 
       {/* ── Tendência ────────────────────────────────── */}
@@ -132,17 +152,15 @@ export function About() {
         accent="bg-green-50 border-green-100"
       >
         <p>
-          Para detetar se o consumo está a aumentar ou a diminuir face ao padrão
-          histórico, o algoritmo compara as <strong>últimas duas semanas</strong>:
+          Para capturar alterações recentes de comportamento, o modelo compara as{" "}
+          <strong>últimas duas semanas</strong>:
         </p>
-        <Formula>
-          trendFactor = média(últimos 7 dias) / média(7 dias anteriores)
-        </Formula>
+        <BlockMath tex="\tau = \frac{\dfrac{1}{7}\displaystyle\sum_{i=1}^{7}E_{-i}}{\dfrac{1}{7}\displaystyle\sum_{i=8}^{14}E_{-i}}" />
         <p>
-          Se o consumo subiu 5 % na última semana, <code>trendFactor = 1.05</code>; se
-          desceu 3 %, fica em <code>0.97</code>. Este fator é multiplicado por todas as
-          previsões futuras, fazendo com que o modelo se adapte rapidamente a alterações
-          de comportamento (ex.: chegada do inverno, férias, novos equipamentos).
+          onde <InlineMath tex="E_{-i}" /> é o consumo de <InlineMath tex="i" /> dias atrás.
+          Se o consumo subiu 5 % na última semana, <InlineMath tex="\tau = 1.05" />; se
+          desceu 3 %, <InlineMath tex="\tau = 0.97" />. Este fator é multiplicado por todas
+          as previsões futuras.
         </p>
       </Section>
 
@@ -153,82 +171,49 @@ export function About() {
         accent="bg-orange-50 border-orange-100"
       >
         <p>
-          Os dados meteorológicos são obtidos da API gratuita{" "}
-          <a
-            href="https://open-meteo.com"
-            target="_blank"
-            rel="noreferrer"
-            className="underline text-orange-700"
-          >
-            Open-Meteo
-          </a>{" "}
-          para a localização do utilizador (via Geolocation API, com fallback para
-          coordenadas de Portugal). São usadas duas variáveis para cada dia previsto:
+          Os dados são obtidos da API{" "}
+          <a href="https://open-meteo.com" target="_blank" rel="noreferrer" className="underline text-orange-700">open-meteo.com</a>.
+          São aplicados dois fatores multiplicativos:
         </p>
 
-        <div className="mt-3 space-y-4">
-          <div>
-            <p className="font-semibold text-orange-700">Fator Térmico</p>
-            <p>
-              Baseia-se na <em>temperatura de sensação térmica</em> (apparent temperature).
-              A temperatura de conforto de referência é <strong>18 °C</strong>: abaixo dessa
-              temperatura o aquecimento aumenta o consumo; acima, o arrefecimento faz o mesmo.
-            </p>
-            <Formula>
-              thermalFactor = 1 + |apparentTemp − 18| × 0.02
-            </Formula>
-            <p>
-              Exemplos: 28 °C → ×1.20; 5 °C → ×1.26; 18 °C → ×1.00 (neutro).
-            </p>
-          </div>
+        <p className="font-semibold text-orange-700 mt-2">Fator Térmico</p>
+        <p>
+          Baseia-se na temperatura de sensação <InlineMath tex="T" />, desviando-se da
+          temperatura de conforto de referência <InlineMath tex="T_c = 18\,°\text{C}" />:
+        </p>
+        <BlockMath tex="\alpha_T = 1 + \bigl|T - T_c\bigr| \times 0.02" />
+        <p>
+          Exemplos:{" "}
+          <InlineMath tex="T=28\,°\text{C} \Rightarrow \alpha_T = 1.20" />;{" "}
+          <InlineMath tex="T=5\,°\text{C} \Rightarrow \alpha_T = 1.26" />;{" "}
+          <InlineMath tex="T=18\,°\text{C} \Rightarrow \alpha_T = 1.00" /> (neutro).
+        </p>
 
-          <div>
-            <p className="font-semibold text-orange-700">Fator de Condições Atmosféricas</p>
-            <p>
-              A precipitação e a humidade relativa também influenciam o consumo (maior
-              permanência em casa, uso de secadores, etc.):
-            </p>
-            <Formula>
-              {`precipMm > 15 mm → ×1.08
-precipMm >  5 mm → ×1.05
-precipMm >  1 mm → ×1.03
-humidade > 80 %  → ×1.02
-caso contrário   → ×1.00`}
-            </Formula>
-          </div>
-        </div>
-
-        <p className="mt-3">
-          Para os dias em que não há dados da API (ex.: API indisponível ou fora do
-          horizonte de previsão), o algoritmo utiliza <strong>médias mensais sazonais</strong>{" "}
-          pré-definidas para Portugal (ex.: Janeiro ≈ 11 °C, Julho ≈ 27 °C).
+        <p className="font-semibold text-orange-700 mt-3">Fator de Condições Atmosféricas</p>
+        <BlockMath tex="\alpha_C = \begin{cases} 1.08 & p > 15\,\text{mm} \\ 1.05 & p > 5\,\text{mm} \\ 1.03 & p > 1\,\text{mm} \\ 1.02 & h > 80\,\% \\ 1.00 & \text{caso contrário} \end{cases}" />
+        <p>
+          onde <InlineMath tex="p" /> é a precipitação diária em mm e{" "}
+          <InlineMath tex="h" /> a humidade relativa em %. Quando a API não está disponível,
+          são usadas médias mensais sazonais para Portugal.
         </p>
       </Section>
 
       {/* ── Previsão Diária ───────────────────────────── */}
       <Section
         icon={<Cloud size={22} className="text-cyan-600" />}
-        title="4 · Cálculo da Previsão Diária (7 dias)"
+        title="4 · Previsão Diária (7 dias)"
         accent="bg-cyan-50 border-cyan-100"
       >
-        <p>Para cada um dos 7 dias futuros, a previsão central é:</p>
-        <Formula>
-          previsto = dowAvg[dow] × trendFactor × thermalFactor × condFactor
-        </Formula>
+        <p>Para cada dia futuro <InlineMath tex="k" />, a previsão central é:</p>
+        <BlockMath tex="\hat{E}_k = \overline{E}_{d(k)} \cdot \tau \cdot \alpha_T^{(k)} \cdot \alpha_C^{(k)} \cdot \lambda" />
         <p>
-          Adicionalmente, é calculado um <strong>intervalo de confiança</strong> com base
-          no desvio padrão histórico (<em>stdDev</em>):
+          onde <InlineMath tex="d(k)" /> é o dia da semana de <InlineMath tex="k" /> e{" "}
+          <InlineMath tex="\lambda" /> é o fator macro nacional (ver secção 7).
         </p>
-        <Formula>
-          {`limite inferior = max(0, previsto − stdDev × 0.8)
-limite superior = previsto + stdDev × 0.8`}
-        </Formula>
-        <p>
-          O <strong>nível de confiança</strong> exibido (60–95 %) é inversamente
-          proporcional ao afastamento do fator de tendência em relação a 1.0 — quanto
-          mais estável o consumo histórico, maior a confiança:
-        </p>
-        <Formula>confiança = clamp(95 − |trendFactor − 1| × 100, 60, 95) %</Formula>
+        <p>O <strong>intervalo de confiança</strong> usa o desvio padrão histórico <InlineMath tex="\sigma" />:</p>
+        <BlockMath tex="\hat{E}_k^- = \max\!\bigl(0,\,\hat{E}_k - 0.8\,\sigma\bigr), \qquad \hat{E}_k^+ = \hat{E}_k + 0.8\,\sigma" />
+        <p>O <strong>nível de confiança</strong> exibido (60–95 %) é:</p>
+        <BlockMath tex="\text{conf} = \operatorname{clamp}\!\bigl(95 - |\tau - 1|\times 100,\;60,\;95\bigr)\,\%" />
       </Section>
 
       {/* ── Previsão Horária ──────────────────────────── */}
@@ -238,24 +223,19 @@ limite superior = previsto + stdDev × 0.8`}
         accent="bg-yellow-50 border-yellow-100"
       >
         <p>
-          Para cada hora <em>h</em> de amanhã, o consumo é estimado distribuindo o
-          total diário previsto segundo um perfil <strong>híbrido</strong> que combina:
+          O consumo de cada hora <InlineMath tex="h" /> é obtido distribuindo o total
+          diário por um perfil <strong>híbrido</strong>:
         </p>
-        <ul className="list-disc pl-5 space-y-1 mt-2">
-          <li>
-            <strong>70 %</strong> do perfil histórico normalizado (o padrão habitual
-            hora a hora desse utilizador);
-          </li>
-          <li>
-            <strong>30 %</strong> do perfil térmico horário, calculado com os dados
-            horários da API (temperatura de sensação por hora) — captura picos de
-            consumo associados ao calor ou frio em horas específicas do dia.
-          </li>
-        </ul>
-        <Formula>
-          {`perfil_blended[h] = hourlyProfile[h] × 0.7 + thermalWeight[h] / Σ(thermalWeight) × 0.3
-consumoHora[h]   = totalDiárioPrevisto × perfil_blended[h]`}
-        </Formula>
+        <BlockMath tex="\psi_h = 0.7\,\phi_h + 0.3\,\frac{w_h}{\displaystyle\sum_{j=0}^{23}w_j}" />
+        <p>
+          onde <InlineMath tex="w_h = \alpha_T(T_h)" /> é o peso térmico para a
+          temperatura de sensação à hora <InlineMath tex="h" />. O consumo horário previsto é:
+        </p>
+        <BlockMath tex="\hat{e}_h = \hat{E} \cdot \psi_h" />
+        <p>
+          O perfil combina <strong>70 %</strong> do padrão histórico do utilizador com{" "}
+          <strong>30 %</strong> do perfil térmico horário (temperatura de sensação por hora).
+        </p>
       </Section>
 
       {/* ── Tarifa ────────────────────────────────────── */}
@@ -265,16 +245,11 @@ consumoHora[h]   = totalDiárioPrevisto × perfil_blended[h]`}
         accent="bg-emerald-50 border-emerald-100"
       >
         <p>
-          O custo é estimado com base na <strong>tarifa bi-horária regulada</strong>:
+          O custo é calculado usando a tarifa bi-horária regulada <InlineMath tex="r_h" />:
         </p>
-        <Formula>
-          {`Horas de Vazio  (00h–07h): 0,10 €/kWh
-Horas de Ponta  (08h–23h): 0,22 €/kWh`}
-        </Formula>
-        <p>
-          Para cada hora, o custo é <code>consumoHora[h] × tarifa[h]</code>. O custo
-          semanal total é a soma das 7 previsões diárias.
-        </p>
+        <BlockMath tex="r_h = \begin{cases} 0.10\,€/\text{kWh} & h \in [0,\,7]\;\text{(vazio)} \\ 0.22\,€/\text{kWh} & h \in [8,\,23]\;\text{(ponta)} \end{cases}" />
+        <p>O custo diário estimado é:</p>
+        <BlockMath tex="C = \sum_{h=0}^{23} \hat{e}_h \cdot r_h" />
       </Section>
 
       {/* ── Rede Nacional ─────────────────────────────── */}
@@ -284,69 +259,41 @@ Horas de Ponta  (08h–23h): 0,22 €/kWh`}
         accent="bg-rose-50 border-rose-100"
       >
         <p>
-          Como camada final, todas as previsões são escaladas por um{" "}
-          <strong>fator macro nacional</strong> derivado dos dados públicos da{" "}
-          <a
-            href="https://datahub.ren.pt"
-            target="_blank"
-            rel="noreferrer"
-            className="underline text-rose-700"
-          >
-            REN Datahub
-          </a>
-          . Este fator reflete a variação homóloga (YoY) do consumo nacional de
-          eletricidade, corrigida para temperatura e dias úteis.
+          Como camada final, todas as previsões são escaladas pelo fator macro nacional{" "}
+          <InlineMath tex="\lambda" />, derivado da variação homóloga (YoY) do consumo
+          nacional publicado pela{" "}
+          <a href="https://datahub.ren.pt" target="_blank" rel="noreferrer" className="underline text-rose-700">REN Datahub</a>,
+          corrigida para temperatura e dias úteis:
         </p>
-        <Formula>
-          previsãoFinal = previsãoLocal × nationalTrendFactor
-        </Formula>
+        <BlockMath tex="\lambda = 1 + \Delta_{\text{YoY}}" />
         <p>
           Se o consumo nacional subiu 2 % face ao ano anterior,{" "}
-          <code>nationalTrendFactor = 1.02</code>. Quando a API da REN não está
-          acessível (limitações de CORS), são usados dados históricos de
-          referência 2024–2025.
+          <InlineMath tex="\lambda = 1.02" />. A previsão final incorpora este fator
+          diretamente em <InlineMath tex="\hat{E}_k" /> (secção 4).
         </p>
       </Section>
 
-      {/* ── Resumo ────────────────────────────────────── */}
+      {/* ── Equação Final ──────────────────────────────── */}
       <div className="bg-gray-900 text-white rounded-2xl p-6">
-        <h2 className="text-lg font-bold mb-3">Equação Final (resumo)</h2>
-        <pre className="text-sm text-green-300 font-mono leading-relaxed overflow-x-auto whitespace-pre-wrap">
-{`previsão_diária =
-    dowAvg[diaDaSemana]
-  × trendFactor
-  × thermalFactor(temperaturaAparente)
-  × condFactor(precipitação, humidade)
-  × nationalTrendFactor
-
-consumo_hora =
-    previsão_diária
-  × (0.7 × perfilHistórico[h] + 0.3 × pesos_térmicos[h])
-
-custo =
-    Σ consumo_hora[h] × tarifa[h]     (0.10 ou 0.22 €/kWh)`}
-        </pre>
+        <h2 className="text-lg font-bold mb-4">Equação Final (resumo)</h2>
+        <BlockMathDark tex="\hat{E}_k = \underbrace{\overline{E}_{d(k)}}_{\text{média histórica}} \cdot \underbrace{\tau}_{\text{tendência}} \cdot \underbrace{\alpha_T \cdot \alpha_C}_{\text{clima}} \cdot \underbrace{\lambda}_{\text{REN}}" />
+        <BlockMathDark tex="\hat{e}_h = \hat{E}_k \cdot \left(0.7\,\phi_h + 0.3\,\frac{w_h}{\sum_j w_j}\right)" />
+        <BlockMathDark tex="C = \sum_{h=0}^{23} \hat{e}_h \cdot r_h" />
       </div>
 
       {/* ── Fontes ────────────────────────────────────── */}
       <div className="rounded-xl border border-gray-200 bg-white p-5 text-sm text-gray-600 space-y-1">
         <p className="font-semibold text-gray-800 mb-2">Fontes de Dados</p>
-        <p>
-          · <strong>Histórico de consumo:</strong> leituras internas do seu contador inteligente (smart meter)
-        </p>
+        <p>· <strong>Histórico de consumo:</strong> leituras do contador inteligente (smart meter)</p>
         <p>
           · <strong>Meteorologia:</strong>{" "}
-          <a href="https://open-meteo.com" target="_blank" rel="noreferrer" className="underline">
-            open-meteo.com
-          </a>{" "}
-          — API gratuita e aberta, atualizada a cada hora
+          <a href="https://open-meteo.com" target="_blank" rel="noreferrer" className="underline">open-meteo.com</a>
+          {" "}— API gratuita e aberta, atualizada a cada hora
         </p>
         <p>
           · <strong>Consumo nacional:</strong>{" "}
-          <a href="https://datahub.ren.pt" target="_blank" rel="noreferrer" className="underline">
-            datahub.ren.pt
-          </a>{" "}
-          — REN (Redes Energéticas Nacionais), dados mensais em GWh
+          <a href="https://datahub.ren.pt" target="_blank" rel="noreferrer" className="underline">datahub.ren.pt</a>
+          {" "}— REN (Redes Energéticas Nacionais), dados mensais em GWh
         </p>
       </div>
 

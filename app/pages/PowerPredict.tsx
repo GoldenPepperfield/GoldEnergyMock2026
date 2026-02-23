@@ -262,7 +262,7 @@ function PredTooltip({ active, payload, label }: any) {
         <p key={p.dataKey} style={{ color: p.color }}>{p.name}: <strong>{p.value} kWh</strong></p>
       ))}
       {d?.usedLiveWeather && (
-        <p className="text-xs text-cyan-600 mt-1">{d.apparentTempC}°C sensacao | {d.humidityPct}% hum. | {d.precipMm}mm chuva</p>
+        <p className="text-xs text-cyan-600 mt-1">{d.apparentTempC}°C sensação | {d.humidityPct}% hum. | {d.precipMm}mm chuva</p>
       )}
       {!d?.usedLiveWeather && <p className="text-xs text-gray-400 mt-1">Estimativa sazonal</p>}
     </div>
@@ -276,7 +276,7 @@ function HrTooltip({ active, payload, label }: any) {
       <p className="font-semibold text-gray-700">{label}</p>
       <p className="text-purple-600">Consumo: <strong>{d?.kwh} kWh</strong></p>
       <p className="text-amber-600">Custo: <strong>EUR {d?.cost}</strong></p>
-      {d?.tempC !== null && <p className="text-cyan-600">Temp: {d.tempC}°C (sensacao {d.apparentTempC}°C)</p>}
+      {d?.tempC !== null && <p className="text-cyan-600">Temp: {d.tempC}°C (sensação {d.apparentTempC}°C)</p>}
       <p className={d?.isPeak ? "text-red-500" : "text-green-500"}>{d?.isPeak ? "Pico 0.22 €/kWh" : "Vazio 0.10 €/kWh"}</p>
     </div>
   );
@@ -367,8 +367,8 @@ export function PowerPredict() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-1">PowerPredict</h1>
           <p className="text-gray-500 text-sm">
-            Previsao algoritmica &middot; {rawHistory.history.length} leituras historicas &middot;&nbsp;
-            Fatores: padrao semanal · perfil horario · sensacao termica (Open-Meteo) · humidade · precipitacao · tendencia · tarifa bi-horaria
+            Previsão algorítmica &middot; {rawHistory.history.length} leituras históricas &middot;&nbsp;
+            Fatores: padrão semanal · perfil horário · sensação térmica (Open-Meteo) · humidade · precipitação · tendência · tarifa bi-horária
           </p>
         </div>
         <Link
@@ -425,12 +425,12 @@ export function PowerPredict() {
             {weather.lastUpdated && (
               <span>Atualizado: {new Date(weather.lastUpdated).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}</span>
             )}
-            <span>Proximo: <strong>{weather.nextRefreshAt}</strong></span>
+            <span>Próximo: <strong>{weather.nextRefreshAt}</strong></span>
             <button
               onClick={weather.refetch}
               disabled={weather.loading}
               className="p-1 rounded-lg hover:bg-cyan-100 disabled:opacity-40 transition-colors"
-              title="Forcar atualizacao"
+              title="Forçar atualização"
             >
               <RefreshCw size={13} className={weather.loading ? "animate-spin" : ""} />
             </button>
@@ -440,7 +440,7 @@ export function PowerPredict() {
         {/* Geolocation error note */}
         {weather.geoError && (
           <p className="mt-2 text-xs text-amber-700 bg-amber-100 rounded-lg px-3 py-1.5">
-            <strong>Localizacao:</strong> {weather.geoError}. A usar coordenadas de fallback ({weather.lat?.toFixed(3)}, {weather.lon?.toFixed(3)}).
+            <strong>Localização:</strong> {weather.geoError}. A usar coordenadas de fallback ({weather.lat?.toFixed(3)}, {weather.lon?.toFixed(3)}).
           </p>
         )}
 
@@ -454,7 +454,7 @@ export function PowerPredict() {
         {/* Live count */}
         {liveCount > 0 && (
           <p className="mt-1.5 text-xs text-cyan-600">
-            Dados climate live usados em <strong>{liveCount}/7</strong> dias da previsao.
+            Dados meteorológicos ao vivo usados em <strong>{liveCount}/7</strong> dias da previsão.
             {liveCount < 7 && " Dias restantes usam estimativa sazonal."}
           </p>
         )}
@@ -523,12 +523,12 @@ export function PowerPredict() {
         )}
         {nationalGrid.isStaticFallback && (
           <p className="mt-2 text-xs text-blue-700 bg-blue-50 rounded-lg px-3 py-1.5">
-            REN Datahub inacessivel (CORS). A usar dados historicos de referencia 2024–2025. Previsoes incluem ajuste nacional ({nationalGrid.nationalTrendFactor !== 1 ? `×${nationalGrid.nationalTrendFactor}` : "neutro"}).
+            REN Datahub inacessível (CORS). A usar dados históricos de referência 2024–2025. Previsões incluem ajuste nacional ({nationalGrid.nationalTrendFactor !== 1 ? `×${nationalGrid.nationalTrendFactor}` : "neutro"}).
           </p>
         )}
         {!nationalGrid.loading && nationalGrid.months.length > 0 && (
           <p className="mt-1.5 text-xs text-emerald-700">
-            Media dos ultimos 3 meses vs ano anterior (corrigida por temperatura e dias uteis). Fonte: REN Datahub — <a href="https://datahub.ren.pt" target="_blank" rel="noreferrer" className="underline">datahub.ren.pt</a>
+            Média dos últimos 3 meses vs. ano anterior (corrigida por temperatura e dias úteis). Fonte: REN Datahub — <a href="https://datahub.ren.pt" target="_blank" rel="noreferrer" className="underline">datahub.ren.pt</a>
           </p>
         )}
       </div>
@@ -537,8 +537,8 @@ export function PowerPredict() {
       <div className="bg-gradient-to-br from-violet-600 to-purple-800 text-white rounded-2xl p-6 shadow-2xl">
         <div className="flex items-center gap-2 mb-5">
           <Calendar size={22} />
-          <h2 className="text-xl font-bold">Previsao: Proximos 7 dias</h2>
-          <span className="ml-auto text-xs bg-white/20 rounded-full px-3 py-1">Confianca: {confidence}%</span>
+          <h2 className="text-xl font-bold">Previsão: Próximos 7 dias</h2>
+          <span className="ml-auto text-xs bg-white/20 rounded-full px-3 py-1">Confiança: {confidence}%</span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
@@ -563,7 +563,7 @@ export function PowerPredict() {
           <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
             <Thermometer size={22} className="mb-2 opacity-80" />
             <p className="text-2xl font-bold">{todayPred?.apparentTempC ?? "--"}°C</p>
-            <p className="text-xs opacity-75 mt-1">Sensacao termica hoje {todayPred?.usedLiveWeather ? "(live)" : "(saz.)"}</p>
+            <p className="text-xs opacity-75 mt-1">Sensação térmica hoje {todayPred?.usedLiveWeather ? "(live)" : "(saz.)"}</p>
           </div>
         </div>
         <div className="mt-4 border-t border-white/20 pt-4 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
@@ -580,7 +580,7 @@ export function PowerPredict() {
             <p className="font-semibold">{todayPred?.offPeakKwh} kWh @ 0.10 EUR</p>
           </div>
           <div>
-            <p className="opacity-60 text-xs">Poupanca potencial</p>
+            <p className="opacity-60 text-xs">Poupança potencial</p>
             <p className="font-semibold text-yellow-300">EUR {((todayPred?.peakKwh ?? 0) * 0.12).toFixed(2)} se tarifa vazio</p>
           </div>
         </div>
@@ -592,19 +592,19 @@ export function PowerPredict() {
           icon={<BarChart2 size={18} />}
           label="Tend. Pessoal"
           value={(trendFactor > 1 ? "+" : "") + ((trendFactor - 1) * 100).toFixed(1) + "%"}
-          sub="ultimas 7 vs 7 anteriores"
+            sub="últimas 7 vs 7 anteriores"
           color={trendFactor <= 1 ? "green" : "red"}
         />
         <FactorCard
           icon={<Activity size={18} />}
           label="Tend. Nacional"
           value={nationalGrid.recentYoYPct !== null ? (nationalGrid.recentYoYPct > 0 ? "+" : "") + nationalGrid.recentYoYPct + "%" : "--"}
-          sub={nationalGrid.loading ? "A carregar REN..." : nationalGrid.error ? "REN indisponivel" : "YoY corrigida (REN)"}
+          sub={nationalGrid.loading ? "A carregar REN..." : nationalGrid.error ? "REN indisponível" : "YoY corrigida (REN)"}
           color={nationalGrid.recentYoYPct === null ? "gray" : (nationalGrid.recentYoYPct ?? 0) <= 0 ? "green" : "red"}
         />
         <FactorCard
           icon={<Thermometer size={18} />}
-          label="Temp. Sensacao"
+          label="Temp. Sensação"
           value={(todayPred?.apparentTempC ?? "--") + "°C"}
           sub={todayPred?.usedLiveWeather ? "Open-Meteo live" : "Estimativa sazonal"}
           color="cyan"
@@ -613,14 +613,14 @@ export function PowerPredict() {
           icon={<Droplets size={18} />}
           label="Humidade Hoje"
           value={(todayPred?.humidityPct ?? "--") + "%"}
-          sub={todayPred?.precipMm ? todayPred.precipMm + "mm precip." : "Sem precipitacao"}
+          sub={todayPred?.precipMm ? todayPred.precipMm + "mm precip." : "Sem precipitação"}
           color={(todayPred?.humidityPct ?? 0) > 80 ? "blue" : "gray"}
         />
         <FactorCard
           icon={<Cpu size={18} />}
-          label="Desvio Padrao"
+            label="Desvio Padrão"
           value={"±" + stdDev + " kWh"}
-          sub="variabilidade diaria"
+          sub="variabilidade diária"
           color="purple"
         />
       </div>
@@ -635,7 +635,7 @@ export function PowerPredict() {
               tab === t ? "border-purple-600 text-purple-700" : "border-transparent text-gray-500 hover:text-gray-700"
             )}
           >
-            {t === "week" ? "Previsao Semanal" : t === "hourly" ? "Perfil Horario (amanha)" : "Dispositivos"}
+            {t === "week" ? "Previsão Semanal" : t === "hourly" ? "Perfil Horário (amanhã)" : "Dispositivos"}
           </button>
         ))}
       </div>
@@ -646,7 +646,7 @@ export function PowerPredict() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Historical */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-              <h3 className="text-base font-semibold text-gray-800 mb-4">Historico: Ultima Semana</h3>
+              <h3 className="text-base font-semibold text-gray-800 mb-4">Histórico: Última Semana</h3>
               <ResponsiveContainer width="100%" height={220}>
                 <AreaChart data={historicalChartData}>
                   <defs>
@@ -666,7 +666,7 @@ export function PowerPredict() {
 
             {/* Forecast */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-              <h3 className="text-base font-semibold text-gray-800 mb-4">Previsao: Proxima Semana</h3>
+              <h3 className="text-base font-semibold text-gray-800 mb-4">Previsão: Próxima Semana</h3>
               <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={predictions}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
@@ -693,7 +693,7 @@ export function PowerPredict() {
                   <tr className="text-gray-500 border-b text-left">
                     <th className="pb-2 pr-3 font-medium">Dia</th>
                     <th className="pb-2 pr-3 font-medium">Clima</th>
-                    <th className="pb-2 pr-3 font-medium">Sensacao</th>
+                    <th className="pb-2 pr-3 font-medium">Sensação</th>
                     <th className="pb-2 pr-3 font-medium">Hum.</th>
                     <th className="pb-2 pr-3 font-medium">Precip.</th>
                     <th className="pb-2 pr-3 font-medium">Consumo</th>
@@ -743,10 +743,10 @@ export function PowerPredict() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-gray-800">
-                Perfil Horario — Amanha ({predictions[1]?.date})
+                Perfil Horário — Amanhã ({predictions[1]?.date})
                 {predictions[1]?.usedLiveWeather && (
                   <span className="ml-2 text-xs text-cyan-600 font-normal">
-                    {predictions[1].tempC}°C | sensacao {predictions[1].apparentTempC}°C | {predictions[1].humidityPct}% hum.
+                    {predictions[1].tempC}°C | sensação {predictions[1].apparentTempC}°C | {predictions[1].humidityPct}% hum.
                     {predictions[1].precipMm > 0 && ` | ${predictions[1].precipMm} mm`}
                   </span>
                 )}
@@ -767,7 +767,7 @@ export function PowerPredict() {
               </BarChart>
             </ResponsiveContainer>
             <p className="text-xs text-gray-400 mt-2 text-center">
-              Perfil historico (70%) + peso termico horario Open-Meteo (30%). Hover para ver temperatura real por hora.
+              Perfil histórico (70%) + peso térmico horário Open-Meteo (30%). Hover para ver temperatura real por hora.
             </p>
           </div>
 
@@ -780,7 +780,7 @@ export function PowerPredict() {
                 <div key={h.hour} className="flex justify-between text-sm text-orange-700 py-1 border-b border-orange-100">
                   <span>
                     {h.hour}
-                    {h.tempC !== null && <span className="text-xs text-gray-400 ml-1">(sensacao {h.apparentTempC}°C)</span>}
+                    {h.tempC !== null && <span className="text-xs text-gray-400 ml-1">(sensação {h.apparentTempC}°C)</span>}
                   </span>
                   <span className="font-medium">{h.kwh} kWh</span>
                 </div>
@@ -797,7 +797,7 @@ export function PowerPredict() {
                   <span className="font-medium">{h.kwh} kWh (0.10€/kWh)</span>
                 </div>
               ))}
-              <p className="text-xs text-green-600 mt-2">Programe maquina de lavar nestas horas</p>
+              <p className="text-xs text-green-600 mt-2">Programe a máquina de lavar nestas horas</p>
             </div>
           </div>
         </div>
@@ -821,7 +821,7 @@ export function PowerPredict() {
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-              <h3 className="text-base font-semibold text-gray-800 mb-4">Percentagem do Total Diario</h3>
+              <h3 className="text-base font-semibold text-gray-800 mb-4">Percentagem do Total Diário</h3>
               <div className="space-y-3 mt-2">
                 {deviceBreakdown.map((d) => (
                   <div key={d.name} className="space-y-1">
@@ -869,45 +869,69 @@ export function PowerPredict() {
         </div>
       )}
 
-      {/* ── Algorithm explanation ─────────────────────── */}
-      <div className="bg-violet-50 border border-purple-100 rounded-xl p-5">
-        <h4 className="font-semibold text-purple-900 mb-3">Como funciona o algoritmo</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-purple-800">
-          <div className="space-y-2">
-            <p><strong>1. Padrao dia-da-semana</strong> — Media de consumo historico por dia da semana (30 dias).</p>
-            <p><strong>2. Perfil horario historico</strong> — Distribuicao real do consumo pelas 24h (pico 19–22h).</p>
-            <p><strong>3. Tendencia pessoal</strong> — Ultimas 7 dias vs anteriores: {trendFactor > 1 ? "subida" : "descida"} de {((Math.abs(trendFactor - 1)) * 100).toFixed(1)}%.</p>
-            <p><strong>4. Tendencia nacional (REN)</strong> — YoY mensal corrigida por temperatura e dias uteis. Fator aplicado: ×{nationalGrid.nationalTrendFactor}{nationalGrid.recentYoYPct !== null ? ` (${nationalGrid.recentYoYPct > 0 ? "+" : ""}${nationalGrid.recentYoYPct}%)` : ""}.</p>
+      {/* ── Algorithm callout ────────────────────────── */}
+      <div className="bg-violet-50 border border-purple-100 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm text-purple-800">
+          <div>
+            <p className="text-xs text-purple-500 font-medium">Tendência pessoal</p>
+            <p className="font-bold">
+              {trendFactor >= 1 ? "+" : ""}{((trendFactor - 1) * 100).toFixed(1)}%{" "}
+              <span className="font-normal text-xs">(últimos 7 dias)</span>
+            </p>
           </div>
-          <div className="space-y-2">
-            <p><strong>5. Sensacao termica (Open-Meteo)</strong> — apparent_temperature hora a hora. +2% por grau de desvio de 18°C.</p>
-            <p><strong>6. Humidade + precipitacao</strong> — Humidade alta e chuva aumentam carga AVAC/estar em casa. Tempestade +8%.</p>
-            <p><strong>7. Peso horario termico</strong> — Cada hora ponderada 70% historico + 30% fator termico real daquela hora.</p>
+          <div>
+            <p className="text-xs text-purple-500 font-medium">Tendência REN</p>
+            <p className="font-bold">
+              {nationalGrid.recentYoYPct !== null
+                ? (nationalGrid.recentYoYPct > 0 ? "+" : "") + nationalGrid.recentYoYPct + "%"
+                : "—"}{" "}
+              <span className="font-normal text-xs">(YoY nacional)</span>
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-purple-500 font-medium">Dados ao vivo</p>
+            <p className="font-bold">
+              {liveCount}/7 dias{" "}
+              <span className="font-normal text-xs">(Open-Meteo)</span>
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-purple-500 font-medium">Confiança</p>
+            <p className="font-bold">
+              {confidence}%{" "}
+              <span className="font-normal text-xs">(±{(stdDev * 0.8).toFixed(1)} kWh)</span>
+            </p>
           </div>
         </div>
+        <Link
+          to="/about"
+          className="flex-shrink-0 text-xs font-semibold text-purple-700 bg-purple-100 hover:bg-purple-200 border border-purple-200 rounded-full px-4 py-2 transition-colors whitespace-nowrap"
+        >
+          Ver algoritmo completo →
+        </Link>
       </div>
 
       {/* ── Savings & patterns ────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-          <h4 className="font-semibold text-green-900 mb-3 flex items-center gap-2"><TrendingDown size={18} /> Oportunidades de Poupanca</h4>
+          <h4 className="font-semibold text-green-900 mb-3 flex items-center gap-2"><TrendingDown size={18} /> Oportunidades de Poupança</h4>
           <ul className="space-y-2 text-sm text-green-800">
             <li>Lavar roupa 02–06h: poupa <strong>EUR {((todayPred?.offPeakKwh ?? 0) * 0.12 / 5).toFixed(2)}</strong>/lavagem</li>
-            <li>Evitar AC 19–22h: ate <strong>EUR {(weekCost * 0.18).toFixed(2)}</strong>/semana</li>
+            <li>Evitar AC 19–22h: até <strong>EUR {(weekCost * 0.18).toFixed(2)}</strong>/semana</li>
             <li>Desligar standby: ~5% (<strong>EUR {(weekCost * 0.05).toFixed(2)}</strong>/semana)</li>
             {predictions.some((p) => p.precipMm > 3) && (
-              <li>Dias chuvosos previstos: pre-aquecer antes das 08h (tarifa vazio)</li>
+              <li>Dias chuvosos previstos: pré-aquecer antes das 08h (tarifa vazio)</li>
             )}
           </ul>
         </div>
         <div className="bg-blue-50 rounded-xl p-5 border border-blue-100">
-          <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2"><Zap size={18} /> Padroes Detetados</h4>
+          <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2"><Zap size={18} /> Padrões Detetados</h4>
           <ul className="space-y-2 text-sm text-blue-800">
-            <li>Pico nocturno: <strong>19h–22h</strong> (~2× base)</li>
+            <li>Pico noturno: <strong>19h–22h</strong> (~2× base)</li>
             <li>Variabilidade: <strong>±{stdDev} kWh/dia</strong></li>
             <li>Tend. pessoal: {trendFactor > 1 ? "crescente" : "decrescente"} ({((Math.abs(trendFactor - 1)) * 100).toFixed(1)}%)</li>
             <li>Tend. nacional REN: {nationalGrid.recentYoYPct !== null ? (nationalGrid.recentYoYPct > 0 ? "+" : "") + nationalGrid.recentYoYPct + "% YoY" : "a carregar..."}</li>
-            <li>Dados climate em tempo real: <strong>{liveCount}/7 dias</strong></li>
+            <li>Dados meteorológicos ao vivo: <strong>{liveCount}/7 dias</strong></li>
           </ul>
         </div>
       </div>
