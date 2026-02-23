@@ -2,6 +2,24 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import type { Plugin } from 'vite'
+
+// Resolves Figma Make's `figma:asset/` imports to a transparent 1x1 PNG placeholder
+function figmaAssetPlugin(): Plugin {
+  const PLACEHOLDER =
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
+  return {
+    name: 'figma-asset',
+    resolveId(id) {
+      if (id.startsWith('figma:asset/')) return '\0' + id
+    },
+    load(id) {
+      if (id.startsWith('\0figma:asset/')) {
+        return `export default "${PLACEHOLDER}"`
+      }
+    },
+  }
+}
 
 export default defineConfig({
   plugins: [
@@ -9,6 +27,7 @@ export default defineConfig({
     // Tailwind is not being actively used – do not remove them
     react(),
     tailwindcss(),
+    figmaAssetPlugin(),
   ],
   resolve: {
     alias: {
@@ -19,4 +38,9 @@ export default defineConfig({
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
+
+  server: {
+    port: 5173,
+    strictPort: true,
+  },
 })
